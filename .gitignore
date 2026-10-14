@@ -1,0 +1,14 @@
+# Supabase authentication session
+.supabase_session.json
+
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Streamlit secrets
+.streamlit/secrets.toml
+
+# Environment variables
+.env
+.env.*
+!.env.example
