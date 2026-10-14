@@ -1,9 +1,10 @@
-
 import streamlit as st
+
 from services.workload_analyzer import WorkloadAnalyzer
 from ui.activity import show_activity_heatmap
 from ui.styles import priority_badge, chip, to_date, today_manila
 from supabase_client import get_supabase
+
 
 PREVIEW_LIMIT = 3
 OVERDUE_COLOR = "#E05252"
@@ -105,14 +106,14 @@ def show_task_preview(
                         extra = (
                             '<div style="margin-top:6px;">'
                             '<span style="display:inline-block;'
-                            'background-color:rgba(57,230,138,0.12);'
-                            'color:#39e68a;'
-                            'border:1px solid rgba(57,230,138,0.45);'
+                            'background-color:#F3DFA5;'
+                            'color:#5C4210;'
+                            'border:1px solid #C49A32;'
                             'border-radius:999px;padding:4px 12px;'
-                            'font-size:13px;font-weight:600;'
+                            'font-size:13px;font-weight:700;'
                             'white-space:nowrap;">'
-                            'task to finish first</span></div>'
-                        )
+                            'Task to finish first</span></div>'
+                                                    )
 
                     st.markdown(
                         '<div style="text-align:right;">'
@@ -134,10 +135,13 @@ def show_task_preview(
         st.rerun()
 
 
-# Saves today's available work time to the logged-in user's profile.
-def save_available_time():
-    available_time = int(st.session_state.available_time_input)
+# Save today's available work time to the user's profile.
+def save_available_time(widget_key):
+    available_time = int(st.session_state[widget_key])
     user_id = st.session_state.get("user_id")
+
+    # Update the shared value so every page sees the same number.
+    st.session_state.available_time = available_time
 
     if not user_id:
         st.session_state.available_time_error = (
@@ -146,7 +150,7 @@ def save_available_time():
         return
 
     try:
-        (
+        response = (
             get_supabase()
             .table("users")
             .update({"available_time": available_time})
@@ -154,13 +158,44 @@ def save_available_time():
             .execute()
         )
 
-        st.session_state.available_time = available_time
+        # No rows returned usually means an RLS update policy is missing.
+        if not response.data:
+            st.session_state.available_time_error = (
+                "Available time was not saved. "
+                "Check your users table update policy (RLS)."
+            )
+            return
+
         st.session_state.available_time_error = ""
 
     except Exception as e:
         st.session_state.available_time_error = (
             f"Could not save available time: {e}"
         )
+
+
+# Shared Available Time input used by Home and Workload Analysis.
+def available_time_input(widget_key):
+    # Always seed the widget from the single saved value.
+    # Each page passes its own widget_key, so the keys never collide.
+    st.session_state[widget_key] = int(
+        st.session_state.get("available_time", 120)
+    )
+
+    st.number_input(
+        "Available Time Today (minutes)",
+        min_value=1,
+        max_value=1440,
+        step=15,
+        key=widget_key,
+        on_change=save_available_time,
+        args=(widget_key,)
+    )
+
+    if st.session_state.get("available_time_error"):
+        st.error(st.session_state.available_time_error)
+
+    return int(st.session_state.get("available_time", 120))
 
 
 # Main Home dashboard.
@@ -278,25 +313,7 @@ def show_home():
     with workload_col:
         st.write("### Workload Overview")
 
-        # Keep the input tied to the saved available-time value.
-        if "available_time_input" not in st.session_state:
-            st.session_state.available_time_input = (
-                st.session_state.get("available_time", 120)
-            )
-
-        available_time = st.number_input(
-            "Available Time Today (minutes)",
-            min_value=1,
-            max_value=1440,
-            step=15,
-            key="available_time_input",
-            on_change=save_available_time
-        )
-
-        st.session_state.available_time = available_time
-
-        if st.session_state.get("available_time_error"):
-            st.error(st.session_state.available_time_error)
+        available_time = available_time_input("home_available_time_input")
 
         if tasks:
             try:

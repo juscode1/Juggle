@@ -1,4 +1,3 @@
-
 import re
 
 import streamlit as st
@@ -111,7 +110,7 @@ def restore_profile(profile_data):
     profile_data = profile_data or {}
 
     try:
-        saved_time = int(profile_data.get("available_time") or 120)
+        saved_time = int(profile_data.get("available_time", 120))
     except (TypeError, ValueError):
         saved_time = 120
 

@@ -1,7 +1,7 @@
-
 import streamlit as st
 
 from services.workload_analyzer import WorkloadAnalyzer
+from ui.home import available_time_input
 
 
 def show_workload():
@@ -21,15 +21,7 @@ def show_workload():
         return
 
     # Let the user set how much time they have available today.
-    available_time = st.number_input(
-        "Available Time Today (minutes)",
-        min_value=1,
-        max_value=1440,
-        value=int(st.session_state.get("available_time", 120)),
-        step=15
-    )
-
-    st.session_state.available_time = available_time
+    available_time = available_time_input("workload_available_time_input")
 
     analyzer = WorkloadAnalyzer(tasks, available_time)
 

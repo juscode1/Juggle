@@ -1,4 +1,3 @@
-
 from html import escape
 
 import streamlit as st
@@ -192,7 +191,6 @@ defaults = {
     "user": User("User"),
     "tasks": [],
     "available_time": 120,
-    "available_time_input": 120,
     "available_time_error": "",
     "assessment_completed": False,
     "assessment_answers": {},
