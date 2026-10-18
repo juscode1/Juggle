@@ -2,7 +2,7 @@ import re
 
 import streamlit as st
 
-from supabase_client import get_supabase, save_auth_session
+from supabase_client import get_supabase
 from models.user import User
 
 
@@ -228,9 +228,6 @@ def login_user(email, password):
                 st.error("Invalid email or password.")
                 return
 
-            # Keep the session available after a browser refresh.
-            save_auth_session(supabase)
-
         except Exception as error:
             message = str(error).lower()
 
@@ -325,7 +322,7 @@ def create_account(name, email, password, confirm_password):
                 st.error("Account could not be created.")
                 return
 
-            # Some Supabase projects require email confirmation first.
+            # Email confirmation may be required.
             if response.session is None:
                 st.success(
                     "Account created. Check your email to confirm your "
@@ -339,9 +336,6 @@ def create_account(name, email, password, confirm_password):
                 "name": name,
                 "available_time": 120
             }).execute()
-
-            # Save the session if signup immediately authenticates the user.
-            save_auth_session(supabase)
 
         except Exception as error:
             message = str(error).lower()
