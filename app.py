@@ -12,10 +12,9 @@ from ui.tasks import show_tasks, load_tasks
 from ui.workload import show_workload
 from ui.recommendation import show_recommendation
 
-
 st.set_page_config(
     page_title="Juggle",
-    page_icon=None,
+    page_icon="assets/juggle_logo.png",
     layout="wide"
 )
 
