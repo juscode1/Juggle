@@ -22,13 +22,13 @@ The system provides personalized recommendations to help users make better workl
 
 ## Technologies Used
 
-| Technology | Purpose |
-|:---|:---|
-| Python | Core application logic |
-| Streamlit | User interface |
-| Supabase | Authentication and database services |
-| Git | Version control |
-| GitHub | Source code hosting |
+| Technology | Version | Purpose |
+|:---|:---|:---|
+| Python | 3.14.7 | Core application logic |
+| Streamlit | 1.64.0 | User interface |
+| Supabase | 2.32.0 | Authentication and database services |
+| Git | 2.56.0.windows.2 | Version control |
+| GitHub | N/A | Source code hosting |
 
 ## Project Structure
 
