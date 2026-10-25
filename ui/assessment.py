@@ -1,4 +1,3 @@
-
 import streamlit as st
 from models.workstyle import WorkStyleProfile
 from supabase_client import get_supabase
